@@ -1,0 +1,7 @@
+/node_modules
+/test/extra-cursor-spec.js
+/test/test-connect-spec.js
+/class/connect-four-copy.js
+/class/game-check.js
+/class/largest-product.js
+/class/test-game.js
