@@ -3,13 +3,13 @@ const Cursor = require("./cursor");
 
 class ConnectFour {
     constructor() {
-        this.playerTurn = "O";
+        // this.playerTurn = "O";
         // Player set up for two players
         this.players = ["X", "O"];
         this.currentPlayerIndex = 0;
 
         // Player Colors
-        This.playerColors = {
+        this.playerColors = {
             X: "red",
             O: "blue",
         };
@@ -30,21 +30,20 @@ class ConnectFour {
         Screen.setGridlines(true);
 
         // Replace this with real commands
+        Screen.addCommand("left", "move cursor left", this.cursor.left);
+        Screen.addCommand("right", "move cursor right", this.cursor.right);
+        Screen.addCommand("up", "move cursor up", this.cursor.up);
+        Screen.addCommand("down", "move cursor down", this.cursor.down);
         Screen.addCommand(
-            "t",
-            "test command (remove)",
-            ConnectFour.testCommand
+            "return",
+            "place move at cursor position",
+            this.placeMove
         );
-
-        this.cursor.setBackgroundColor();
+        // this.cursor.setBackgroundColor();
         Screen.render();
     }
 
-    // Remove this
-    static testCommand() {
-        console.log("TEST COMMAND");
-    }
-
+    // Check for win
     static checkWin(grid) {
         const directions = [
             [0, 1], // Horizontal
@@ -96,6 +95,38 @@ class ConnectFour {
         // No winner and not tied, (game ongoing)
         return false;
     }
+
+    // Place move
+    placeMove = () => {
+        // console.log(this.grid);
+        const currentPlayerSymbol = this.players[this.currentPlayerIndex];
+        const currentPlayerColor = this.playerColors[currentPlayerSymbol];
+
+        if (Screen.grid[this.cursor.row][this.cursor.col] === " ") {
+            Screen.setTextColor(
+                this.cursor.row,
+                this.cursor.col,
+                currentPlayerColor
+            );
+            Screen.setGrid(
+                this.cursor.row,
+                this.cursor.col,
+                currentPlayerSymbol
+            );
+            Screen.render();
+
+            // Check for winner
+            if (ConnectFour.checkWin(Screen.grid)) {
+                ConnectFour.endGame(ConnectFour.checkWin(Screen.grid));
+            } else {
+                // Switch player
+                this.currentPlayerIndex =
+                    (this.currentPlayerIndex + 1) % this.players.length;
+            }
+        } else {
+            console.log("invalid move, this space is occupied");
+        }
+    };
 
     static endGame(winner) {
         if (winner === "O" || winner === "X") {
